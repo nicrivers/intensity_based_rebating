@@ -13,7 +13,7 @@ To execute the files contained in this repository, you will require:
     - kableExtra
     - readxl
 
-All files are executed on Windows OS.
+All files are executed on Windows OS. The path environment variable should be set so that both GAMS and R can be called from the command line.
 
 ## Instructions
 To replicate Table 2, and Figures 5, 6, 7, 13, 14, 17, 18, an 19, execute the file:
