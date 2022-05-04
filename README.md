@@ -9,9 +9,9 @@ Bohringer, C., C. Fischer, and N. Rivers, "Intensity-based Rebating of Emissions
 To execute the files contained in this repository, you will require:
 - GAMS version 34 or above with a license for PATH and MPSGE
 - R version 4 or above, with the following packages
-    - tidyverse
-    - kableExtra
-    - readxl
+    - tidyverse, version 1.3.0
+    - kableExtra, version 1.3.4
+    - readxl, version 1.3.1
 
 All files are executed on Windows OS. The path environment variable should be set so that both GAMS and R can be called from the command line.
 
