@@ -150,7 +150,25 @@ ggplot(dat %>% filter(item == "Emissions", sector=="all", metric == "equal-q"),
   labs(x=NULL)
 ggsave(paste0("co2all_q",country,".png"), width=plot_width, height=plot_height)
 
+# Dollars per tonne
+bmk <- read_excel(paste0("../bmk_",country,".xlsx"))
 
+dat %>% 
+  filter(item %in% c("Welfare", "Emissions"), 
+         target == 20, 
+         metric == "equal-p", 
+         sector=="all") %>% 
+  pivot_wider(names_from=item) %>% 
+  mutate(Emissions = Emissions/100*bmk %>% filter(!is.na(CO2)) %>% summarise(CO2=sum(CO2)) %>% pull(), 
+         Welfare=Welfare/100*bmk %>% filter(...2 == "Consumption") %>% pull(Y),
+         dollars_per_tonne=Welfare/Emissions*1000) %>%
+  ggplot(aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=dollars_per_tonne)) +
+  geom_col(alpha=0.5, colour="black", position="dodge", fill=onecol) +
+  theme_bw() +
+  geom_hline(yintercept=0) +
+  labs(x=NULL,
+       y="Average cost per tonne of emission reductions ($/t)")
+ggsave(paste0("dollars_per_tonne_p",country,".png"), width=plot_width, height=plot_height)
 
 # Calculate changes in emission intensity
 dat_int <- inner_join(
