@@ -1,0 +1,13 @@
+$stitle	Define a Dataset for the Carbon Rebate Policy Simulations
+
+*	Read the regions identifiers and mapping:
+
+$include %system.fp%rebate_3regions
+
+*	Define the dataset with two factors (lab,cap)
+
+$include %system.fp%twofactors
+
+*	Read the sector mapping:
+
+$include %system.fp%rebate_7sectors
