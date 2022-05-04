@@ -5,7 +5,9 @@ if not exist ibr_graphs\nul mkdir ibr_graphs
 
 del gdx\*.gdx
 del lst\*.lst
-del ibr_graphs\*.*
+del ibr_graphs\*.png
+del ibr_graphs\*.tex
+del ibr_graphs\*.pdf
 
 :goto :ssa
 
