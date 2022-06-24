@@ -1,0 +1,7 @@
+*.GEN
+*.xlsx
+gdx/*.*
+list/*.*
+*.g00
+*.lst
+*.gen
