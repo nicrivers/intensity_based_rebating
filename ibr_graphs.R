@@ -38,6 +38,15 @@ maxwelf <- maxwelf/10
 plot_width = 4
 plot_height = 4
 
+# Rename rebates
+dat <- dat %>%
+  mutate(rebate = case_when(rebate == "LSR" ~ "LS",
+                            rebate == "OBR" ~ "O",
+                            rebate == "ABR" ~ "A",
+                            rebate == "IBOR" ~ "IO",
+                            rebate == "IBER" ~ "IE"),
+         rebate = factor(rebate, levels = c("LS", "O", "A", "IO", "IE")))
+
 # Two axis figure
 dat %>% 
   filter(item %in% c("Output","CO2 price($)"), 
@@ -54,7 +63,7 @@ ggsave("two_axis.png", width=plot_width, height=plot_height)
 
 
 ggplot(dat %>% filter(item=="Welfare", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100)) +
+       aes(x=rebate, y=value/100)) +
   geom_col(fill=onecol, alpha=0.5, colour="black") +
   scale_y_continuous(name="Consumption loss (%)", labels=scales::percent_format(), limits=c(maxwelf/100,0)) +
   theme_bw() +
@@ -63,7 +72,7 @@ ggplot(dat %>% filter(item=="Welfare", metric == "equal-q"),
 ggsave(paste0("welfare_q",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item=="Welfare", metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100)) +
+       aes(x=rebate, y=value/100)) +
   geom_col(fill=onecol, alpha=0.5, colour="black") +
   scale_y_continuous(name="Consumption loss (%)", labels=scales::percent_format(), limits=c(maxwelf/100,0)) +
   theme_bw() +
@@ -72,7 +81,7 @@ ggplot(dat %>% filter(item=="Welfare", metric == "equal-p"),
 ggsave(paste0("welfare_p",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Output", sector != "all", metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=sector)) +
+       aes(x=rebate, y=value/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(), limits=c(maxoutput/100,minoutput/100)) +
   theme_bw() +
@@ -82,7 +91,7 @@ ggplot(dat %>% filter(item == "Output", sector != "all", metric == "equal-p"),
 ggsave(paste0("output_p",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Output", sector != "all", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=sector)) +
+       aes(x=rebate, y=value/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(), limits=c(maxoutput/100,minoutput/100)) +
   theme_bw() +
@@ -92,7 +101,7 @@ ggplot(dat %>% filter(item == "Output", sector != "all", metric == "equal-q"),
 ggsave(paste0("output_q",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Emissions", sector != "all", metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=sector)) +
+       aes(x=rebate, y=value/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name="Sector emissions (%)", labels=scales::percent_format(), limits=c(maxemit/100,0)) +
   theme_bw() +
@@ -102,7 +111,7 @@ ggplot(dat %>% filter(item == "Emissions", sector != "all", metric == "equal-p")
 ggsave(paste0("co2_p",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Emissions", sector != "all", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=sector)) +
+       aes(x=rebate, y=value/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name="Sector emissions (%)", labels=scales::percent_format(), limits=c(maxemit/100,0)) +
   theme_bw() +
@@ -112,7 +121,7 @@ ggplot(dat %>% filter(item == "Emissions", sector != "all", metric == "equal-q")
 ggsave(paste0("co2_q",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "CO2 price($)", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value, fill=sector)) +
+       aes(x=rebate, y=value, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~" ($/t)"), labels=scales::dollar_format(), limits=c(0,maxprice)) +
   theme_bw() +
@@ -122,7 +131,7 @@ ggplot(dat %>% filter(item == "CO2 price($)", metric == "equal-q"),
 ggsave(paste0("pco2_q",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "CO2 price($)", metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value, fill=sector)) +
+       aes(x=rebate, y=value, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~" ($/t)"), labels=scales::dollar_format(), limits=c(0,maxprice)) +
   theme_bw() +
@@ -133,7 +142,7 @@ ggsave(paste0("pco2_p",country,".png"), width=plot_width, height=plot_height)
 
 
 ggplot(dat %>% filter(item == "Emissions", sector=="all", metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100)) +
+       aes(x=rebate, y=value/100)) +
   geom_col(alpha=0.5, colour="black", position="dodge", fill=onecol) +
   scale_y_continuous(name="Change in total emissions", labels=scales::percent_format(), limits=c(maxemitall/100,0)) +
   theme_bw() +
@@ -142,7 +151,7 @@ ggplot(dat %>% filter(item == "Emissions", sector=="all", metric == "equal-p"),
 ggsave(paste0("co2all_p",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Emissions", sector=="all", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100)) +
+       aes(x=rebate, y=value/100)) +
   geom_col(alpha=0.5, colour="black", position="dodge", fill=onecol) +
   scale_y_continuous(name="Change in total emissions", labels=scales::percent_format(), limits=c(maxemitall/100,0)) +
   theme_bw() +
@@ -162,7 +171,7 @@ dat %>%
   mutate(Emissions = Emissions/100*bmk %>% filter(!is.na(CO2)) %>% summarise(CO2=sum(CO2)) %>% pull(), 
          Welfare=Welfare/100*bmk %>% filter(...2 == "Consumption") %>% pull(Y),
          dollars_per_tonne=Welfare/Emissions*1000) %>%
-  ggplot(aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=dollars_per_tonne)) +
+  ggplot(aes(x=rebate, y=dollars_per_tonne)) +
   geom_col(alpha=0.5, colour="black", position="dodge", fill=onecol) +
   theme_bw() +
   geom_hline(yintercept=0) +
@@ -179,7 +188,7 @@ dat %>%
   mutate(Emissions = Emissions/100*bmk %>% filter(!is.na(CO2)) %>% summarise(CO2=sum(CO2)) %>% pull(), 
          Welfare=Welfare/100*bmk %>% filter(...2 == "Consumption") %>% pull(Y),
          dollars_per_tonne=Welfare/Emissions*1000) %>%
-  ggplot(aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=dollars_per_tonne)) +
+  ggplot(aes(x=rebate, y=dollars_per_tonne)) +
   geom_col(alpha=0.5, colour="black", position="dodge", fill=onecol) +
   theme_bw() +
   geom_hline(yintercept=0) +
@@ -204,7 +213,7 @@ dat_int <- inner_join(
 maxint <- dat_int %>% pull(intensity) %>% min() %>% floor()
 
 ggplot(dat_int %>% filter(metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=intensity/100, fill=sector)) +
+       aes(x=rebate, y=intensity/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name=bquote("Change in total "~CO[2]~" intensity"), labels=scales::percent_format(), limits=c(maxint/100,0)) +
   theme_bw() +
@@ -214,7 +223,7 @@ ggplot(dat_int %>% filter(metric == "equal-p"),
 ggsave(paste0("int_p",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat_int %>% filter(metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=intensity/100, fill=sector)) +
+       aes(x=rebate, y=intensity/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name=bquote("Change in total "~CO[2]~" intensity"), labels=scales::percent_format(), limits=c(maxint/100,0)) +
   theme_bw() +
@@ -229,7 +238,12 @@ dats <- read_excel("../report.xlsx", sheet = "macro") %>%
   filter(metric == "equal-q") %>%
   mutate(target = as.numeric(target)) %>%
   filter(target <= 55) %>%
-  mutate(rebate = factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")))
+  mutate(rebate = case_when(rebate == "LSR" ~ "LS",
+                            rebate == "OBR" ~ "O",
+                            rebate == "ABR" ~ "A",
+                            rebate == "IBOR" ~ "IO",
+                            rebate == "IBER" ~ "IE"),
+         rebate = factor(rebate, levels = c("LS", "O", "A", "IO", "IE")))
 
 # welfare comparison by stringency
 ggplot(dats %>% filter(item == "Welfare"), aes(x=target/100, y=value/100, colour = rebate)) +
@@ -267,8 +281,8 @@ ggplot(dats %>% filter(item == "Output")
 ggsave(paste0("stringency_output",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
-ggplot(inner_join(dats %>% filter(item == "Output", rebate != "LSR"),
-                  dats %>% filter(item == "Output", rebate == "LSR") %>% rename(LSR=value) %>% select(-rebate)
+ggplot(inner_join(dats %>% filter(item == "Output", rebate != "LS"),
+                  dats %>% filter(item == "Output", rebate == "LS") %>% rename(LSR=value) %>% select(-rebate)
 ) %>%
   mutate(relative_to_LSR = value / LSR - 1), aes(x=target/100, y=relative_to_LSR, colour = rebate, linetype=sector)) +
   geom_line() +
@@ -291,8 +305,8 @@ ggplot(dats %>% filter(item == "Emissions", sector != "all"), aes(x=target/100, 
 ggsave(paste0("strongency_emissions",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
-ggplot(inner_join(dats %>% filter(item == "Emissions", rebate != "LSR"),
-                  dats %>% filter(item == "Emissions", rebate == "LSR") %>% rename(LSR=value) %>% select(-rebate)
+ggplot(inner_join(dats %>% filter(item == "Emissions", rebate != "LS"),
+                  dats %>% filter(item == "Emissions", rebate == "LS") %>% rename(LSR=value) %>% select(-rebate)
 ) %>%
   mutate(relative_to_LSR = value / LSR - 1) %>%
   filter(sector != "all"), aes(x=target/100, y=relative_to_LSR, colour = rebate, linetype=sector)) +
@@ -315,8 +329,8 @@ ggplot(dats %>% filter(item == "CO2 price($)", sector != "all"), aes(x=target/10
 ggsave(paste0("stringency_price",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
-ggplot(inner_join(dats %>% filter(item == "CO2 price($)", rebate != "LSR"),
-                  dats %>% filter(item == "CO2 price($)", rebate == "LSR") %>% rename(LSR=value) %>% select(-rebate)
+ggplot(inner_join(dats %>% filter(item == "CO2 price($)", rebate != "LS"),
+                  dats %>% filter(item == "CO2 price($)", rebate == "LS") %>% rename(LSR=value) %>% select(-rebate)
 ) %>%
   mutate(relative_to_LSR = value / LSR - 1) %>%
   filter(sector != "all"), aes(x=target/100, y=relative_to_LSR, colour = rebate, linetype=sector)) +
