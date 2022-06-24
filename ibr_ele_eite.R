@@ -17,7 +17,15 @@ dat$elec <- gsub("\\_[A-Za-z]+$","",dat$scen)
 dat$rebate <- str_replace(dat$scen,dat$elec,"")
 dat$rebate <- gsub("\\_","",dat$rebate)
 dat$rebate <- toupper(dat$rebate)
-dat$rebate <- factor(dat$rebate, levels=c("LSR","OBR","ABR","IBOR","IBER"))
+
+# Rename rebates
+dat <- dat %>%
+  mutate(rebate = case_when(rebate == "LSR" ~ "LS",
+                            rebate == "OBR" ~ "O",
+                            rebate == "ABR" ~ "A",
+                            rebate == "IBOR" ~ "IO",
+                            rebate == "IBER" ~ "IE"),
+         rebate = factor(rebate, levels = c("LS", "O", "A", "IO", "IE")))
 
 # plots
 
@@ -66,49 +74,49 @@ ggsave("co2price_elec_eite.png", width = plot_width, height = plot_height)
 datw <- dat %>%
   select(-scen) %>%
   pivot_wider(names_from=rebate, values_from = value) %>%
-  mutate(across(where(is.double), ~ . / LSR)) %>%
+  mutate(across(where(is.double), ~ . / LS)) %>%
   pivot_longer(cols = 4:8, names_to = "rebate", values_to = "value")
 
-ggplot(datw %>% filter(item=="Welfare", rebate!="LSR"),
+ggplot(datw %>% filter(item=="Welfare", rebate!="LS"),
        aes(x=elec,y=value-1)) +
-  facet_wrap(~factor(rebate, levels=c("OBR","ABR","IBOR","IBER"))) +
+  facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
-  scale_y_continuous(name="Consumption loss relative to LSR (%)", labels=scales::percent_format()) +
+  scale_y_continuous(name="Consumption loss relative to LS (%)", labels=scales::percent_format()) +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
 ggsave("welfare_elec_eite.png", width = plot_width, height = plot_height)
 
-ggplot(datw %>% filter(item=="CO2 price($)", sector == "EITE", rebate != "LSR"),
+ggplot(datw %>% filter(item=="CO2 price($)", sector == "EITE", rebate != "LS"),
        aes(x=elec,y=value-1)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
-  facet_wrap(~factor(rebate, levels=c("OBR","ABR","IBOR","IBER"))) +
+  facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
-  scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~", relative to LSR"), labels=scales::percent_format()) +
+  scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~", relative to LS"), labels=scales::percent_format()) +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
 ggsave("co2price_elec_eite.png", width = plot_width, height = plot_height)
 
-ggplot(datw %>% filter(item=="Output", sector == "EITE", rebate != "LSR"),
+ggplot(datw %>% filter(item=="Output", sector == "EITE", rebate != "LS"),
        aes(x=elec,y=value-1)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
-  facet_wrap(~factor(rebate, levels=c("OBR","ABR","IBOR","IBER"))) +
+  facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
-  scale_y_continuous(name="Output reduction EITE, relative to LSR (%)", labels=scales::percent_format()) +
+  scale_y_continuous(name="Output reduction EITE, relative to LS (%)", labels=scales::percent_format()) +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
 ggsave("output_elec_eite.png", width = plot_width, height = plot_height)
 
-ggplot(datw %>% filter(item=="Emissions", sector == "EITE", rebate != "LSR"),
+ggplot(datw %>% filter(item=="Emissions", sector == "EITE", rebate != "LS"),
        aes(x=elec,y=value-1)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
-  facet_wrap(~factor(rebate, levels=c("OBR","ABR","IBOR","IBER"))) +
+  facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
-  scale_y_continuous(name="Emission reduction EITE, relative to LSR (%)", labels=scales::percent_format()) +
+  scale_y_continuous(name="Emission reduction EITE, relative to LS (%)", labels=scales::percent_format()) +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
 ggsave("emission_elec_eite.png", width = plot_width, height = plot_height)
