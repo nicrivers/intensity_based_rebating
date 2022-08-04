@@ -5,12 +5,13 @@ directory <- "./ibr_graphs"
 
 dat <- read_excel("output_ele_eite.xlsx", col_names = c("scen","item", "sector", "value"))
 
+dir.create(directory, showWarnings = FALSE)
 setwd(directory)
 
 # width and height
 plot_width = 6
 plot_height = 6
-onecol <- "#000004"
+onecol <- "#1B9E77"
 twosec <- c("EITE" = "#000004", "non-EITE" = "#fcffa4")
 
 dat$elec <- gsub("\\_[A-Za-z]+$","",dat$scen)
@@ -78,45 +79,45 @@ datw <- dat %>%
   pivot_longer(cols = 4:8, names_to = "rebate", values_to = "value")
 
 ggplot(datw %>% filter(item=="Welfare", rebate!="LS"),
-       aes(x=elec,y=value-1)) +
+       aes(x=elec,y=value)) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
   scale_y_continuous(name="Consumption loss relative to LS (%)", labels=scales::percent_format()) +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   labs(x=NULL)
 ggsave("welfare_elec_eite.png", width = plot_width, height = plot_height)
 
 ggplot(datw %>% filter(item=="CO2 price($)", sector == "EITE", rebate != "LS"),
-       aes(x=elec,y=value-1)) +
+       aes(x=elec,y=value)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
   scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~", relative to LS"), labels=scales::percent_format()) +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   labs(x=NULL)
 ggsave("co2price_elec_eite.png", width = plot_width, height = plot_height)
 
 ggplot(datw %>% filter(item=="Output", sector == "EITE", rebate != "LS"),
-       aes(x=elec,y=value-1)) +
+       aes(x=elec,y=value)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
   scale_y_continuous(name="Output reduction EITE, relative to LS (%)", labels=scales::percent_format()) +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   labs(x=NULL)
 ggsave("output_elec_eite.png", width = plot_width, height = plot_height)
 
 ggplot(datw %>% filter(item=="Emissions", sector == "EITE", rebate != "LS"),
-       aes(x=elec,y=value-1)) +
+       aes(x=elec,y=value)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
   theme(legend.position = "none", axis.text.x = element_text(angle=90,hjust = 0, vjust=0.5)) +
   scale_y_continuous(name="Emission reduction EITE, relative to LS (%)", labels=scales::percent_format()) +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   labs(x=NULL)
 ggsave("emission_elec_eite.png", width = plot_width, height = plot_height)
