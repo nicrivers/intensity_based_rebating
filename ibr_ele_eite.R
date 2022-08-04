@@ -39,7 +39,7 @@ dat <- dat %>%
   # Remove EITE aggregate
   filter(sector != "EITE") %>%
   # Remove non-EITE sectors
-  filter(! sector %in% c("oil","gas","c","col","CRU","ROI","g","i")) %>%
+  filter(! sector %in% c("gas","c","col","CRU","ROI","g","i")) %>%
   # Remove non-EITE aggregate for easier visualisation
   filter(sector != "non-EITE")
 
