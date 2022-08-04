@@ -120,4 +120,4 @@ ggplot(datw %>% filter(item=="Emissions", sector == "EITE", rebate != "LS"),
   scale_y_continuous(name="Emission reduction EITE, relative to LS (%)", labels=scales::percent_format()) +
   geom_hline(yintercept = c(0,1)) +
   labs(x=NULL)
-ggsave("emission_elec_eite.png", width = plot_width, height = plot_height)
+ggsave("emissions_elec_eite.png", width = plot_width, height = plot_height)
