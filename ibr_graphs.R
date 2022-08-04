@@ -24,6 +24,7 @@ setwd(directory)
 # two-Sector colours
 onecol <- "#000004"
 twosec <- c("EITE" = "#000004", "non-EITE" = "#fcffa4")
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 # range
 maxemit <- dat %>% filter(item == "Emissions") %>% pull(value) %>% min() %>% floor()
@@ -252,7 +253,7 @@ ggplot(dats %>% filter(item == "Welfare"), aes(x=target/100, y=value/100, colour
   geom_hline(yintercept = 0) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Consumption loss") +
-  scale_color_brewer(palette = "Set1")
+  scale_color_manual(values=cbPalette)
 ggsave(paste0("stringency_welfare",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
@@ -265,7 +266,7 @@ ggplot(inner_join(dats %>% filter(item == "Welfare", rebate != "LS"),
   geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Consumption loss relative to LSR") +
-  scale_color_brewer(palette = "Set1") 
+  scale_color_manual(values=cbPalette) 
 ggsave(paste0("stringency_welfare_relative",country,".png"), width=plot_width, height=plot_height)
 
 
@@ -277,7 +278,7 @@ ggplot(dats %>% filter(item == "Output")
   geom_hline(yintercept = 0) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Change in output") +
-  scale_color_brewer(palette = "Set1")
+  scale_color_manual(values=cbPalette)
 ggsave(paste0("stringency_output",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
@@ -290,7 +291,7 @@ ggplot(inner_join(dats %>% filter(item == "Output", rebate != "LS"),
   geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Change in output relative to LSR") +
-  scale_color_brewer(palette = "Set1")
+  scale_color_manual(values=cbPalette)
 ggsave(paste0("stringency_output_relative",country,".png"), width=plot_width, height=plot_height)
 
 
@@ -301,7 +302,7 @@ ggplot(dats %>% filter(item == "Emissions", sector != "all"), aes(x=target/100, 
   geom_hline(yintercept = 0) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Change in emissions") +
-  scale_color_brewer(palette = "Set1")
+  scale_color_manual(values=cbPalette)
 ggsave(paste0("strongency_emissions",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
@@ -315,7 +316,7 @@ ggplot(inner_join(dats %>% filter(item == "Emissions", rebate != "LS"),
   geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Change in emissions relative to LSR") +
-  scale_color_brewer(palette = "Set1")
+  scale_color_manual(values=cbPalette)
 ggsave(paste0("stringency_emissions_relative",country,".png"), width=plot_width, height=plot_height)
 
 # sector co2 price comparison by stringency
@@ -325,7 +326,7 @@ ggplot(dats %>% filter(item == "CO2 price($)", sector != "all"), aes(x=target/10
   geom_hline(yintercept = 0) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~" ($/t)"), labels=scales::dollar_format()) +
-  scale_color_brewer(palette = "Set1")
+  scale_color_manual(values=cbPalette)
 ggsave(paste0("stringency_price",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
@@ -339,6 +340,6 @@ ggplot(inner_join(dats %>% filter(item == "CO2 price($)", rebate != "LS"),
   geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name=bquote("Opportunity cost of "~CO[2]~" relative to LSR")) +
-  scale_color_brewer(palette = "Set1")
+  scale_color_manual(values=cbPalette)
 ggsave(paste0("stringency_price_relative",country,".png"), width=plot_width, height=plot_height)
 
