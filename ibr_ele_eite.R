@@ -70,16 +70,23 @@ ggplot(dat %>% filter(item=="CO2 price($)", sector != "all"), aes(x=rebate, y=va
 ggsave("co2price_elec_eite.png", width = plot_width, height = plot_height)
 
 
+new_names <- tibble(
+  elec = c("ele_eite", "ele_not_eite"),
+  elec_label = c("Electricity\nin EITE", "Electricity\nnot in EITE")
+)
+
+
 
 # relative to LSR
 datw <- dat %>%
   select(-scen) %>%
   pivot_wider(names_from=rebate, values_from = value) %>%
   mutate(across(where(is.double), ~ . / LS)) %>%
-  pivot_longer(cols = 4:8, names_to = "rebate", values_to = "value")
+  pivot_longer(cols = 4:8, names_to = "rebate", values_to = "value") %>% 
+  inner_join(new_names)
 
 ggplot(datw %>% filter(item=="Welfare", rebate!="LS"),
-       aes(x=elec,y=value)) +
+       aes(x=elec_label,y=value)) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   theme_bw() +
@@ -90,7 +97,7 @@ ggplot(datw %>% filter(item=="Welfare", rebate!="LS"),
 ggsave("welfare_elec_eite.png", width = plot_width, height = plot_height)
 
 ggplot(datw %>% filter(item=="CO2 price($)", sector == "EITE", rebate != "LS"),
-       aes(x=elec,y=value)) +
+       aes(x=elec_label,y=value)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
@@ -101,7 +108,7 @@ ggplot(datw %>% filter(item=="CO2 price($)", sector == "EITE", rebate != "LS"),
 ggsave("co2price_elec_eite.png", width = plot_width, height = plot_height)
 
 ggplot(datw %>% filter(item=="Output", sector == "EITE", rebate != "LS"),
-       aes(x=elec,y=value)) +
+       aes(x=elec_label,y=value)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
@@ -112,7 +119,7 @@ ggplot(datw %>% filter(item=="Output", sector == "EITE", rebate != "LS"),
 ggsave("output_elec_eite.png", width = plot_width, height = plot_height)
 
 ggplot(datw %>% filter(item=="Emissions", sector == "EITE", rebate != "LS"),
-       aes(x=elec,y=value)) +
+       aes(x=elec_label,y=value)) +
   geom_col(position="dodge", fill=onecol, alpha=0.5) +
   facet_wrap(~factor(rebate, levels=c("O","A","IO","IE"))) +
   theme_bw() +
