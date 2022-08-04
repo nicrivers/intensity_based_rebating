@@ -18,6 +18,7 @@ dat <- read_excel("report.xlsx", sheet = "sector") %>%
   # EITE sectors
   filter(industry %in% c("chm","i_s","nfm","nmm","oil","ppp"))
 
+dir.create(directory, showWarnings = FALSE)
 setwd(directory)
 
 
@@ -36,11 +37,20 @@ maxprice <- dat %>% filter(item == "CO2 price($)") %>% pull(value) %>% max() %>%
 plot_width = 4
 plot_height = 4
 
+# Rename rebates
+dat <- dat %>%
+  mutate(rebate = case_when(rebate == "LSR" ~ "LS",
+                            rebate == "OBR" ~ "O",
+                            rebate == "ABR" ~ "A",
+                            rebate == "IBOR" ~ "IO",
+                            rebate == "IBER" ~ "IE"),
+         rebate = factor(rebate, levels = c("LS", "O", "A", "IO", "IE")))
+
 
 ggplot(dat %>% filter(item == "Output",  metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=industry)) +
+       aes(x=rebate, y=value/100, fill=industry)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
-  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(), limits=c(maxoutput/100,minoutput/100)) +
+  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(accuracy=1), limits=c(maxoutput/100,minoutput/100)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL) +
@@ -48,9 +58,9 @@ ggplot(dat %>% filter(item == "Output",  metric == "equal-p"),
 ggsave(paste0("output_p_eite",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Output", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=industry)) +
+       aes(x=rebate, y=value/100, fill=industry)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
-  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(), limits=c(maxoutput/100,minoutput/100)) +
+  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(accuracy=1), limits=c(maxoutput/100,minoutput/100)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL) +
@@ -58,9 +68,9 @@ ggplot(dat %>% filter(item == "Output", metric == "equal-q"),
 ggsave(paste0("output_q_eite",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Emissions", metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=industry)) +
+       aes(x=rebate, y=value/100, fill=industry)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
-  scale_y_continuous(name="Sector emissions (%)", labels=scales::percent_format(), limits=c(maxemit/100,0)) +
+  scale_y_continuous(name="Sector emissions (%)", labels=scales::percent_format(accuracy=1), limits=c(maxemit/100,0)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL) +
@@ -68,9 +78,9 @@ ggplot(dat %>% filter(item == "Emissions", metric == "equal-p"),
 ggsave(paste0("co2_p_eite",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "Emissions", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value/100, fill=industry)) +
+       aes(x=rebate, y=value/100, fill=industry)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
-  scale_y_continuous(name="Sector emissions (%)", labels=scales::percent_format(), limits=c(maxemit/100,0)) +
+  scale_y_continuous(name="Sector emissions (%)", labels=scales::percent_format(accuracy=1), limits=c(maxemit/100,0)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL) +
@@ -78,7 +88,7 @@ ggplot(dat %>% filter(item == "Emissions", metric == "equal-q"),
 ggsave(paste0("co2_q_eite",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "CO2 price($)", metric == "equal-q"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value, fill=industry)) +
+       aes(x=rebate, y=value, fill=industry)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~" ($/t)"), labels=scales::dollar_format(), limits=c(0,maxprice)) +
   theme_bw() +
@@ -88,7 +98,7 @@ ggplot(dat %>% filter(item == "CO2 price($)", metric == "equal-q"),
 ggsave(paste0("pco2_q_eite",country,".png"), width=plot_width, height=plot_height)
 
 ggplot(dat %>% filter(item == "CO2 price($)", metric == "equal-p"),
-       aes(x=factor(rebate, levels=c("LSR","OBR","ABR","IBOR","IBER")), y=value, fill=industry)) +
+       aes(x=rebate, y=value, fill=industry)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
   scale_y_continuous(name=bquote("Opportunity cost of "~CO[2]~" ($/t)"), labels=scales::dollar_format(), limits=c(0,maxprice)) +
   theme_bw() +

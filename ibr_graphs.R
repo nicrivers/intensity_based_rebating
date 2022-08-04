@@ -65,7 +65,7 @@ ggsave("two_axis.png", width=plot_width, height=plot_height)
 ggplot(dat %>% filter(item=="Welfare", metric == "equal-q"),
        aes(x=rebate, y=value/100)) +
   geom_col(fill=onecol, alpha=0.5, colour="black") +
-  scale_y_continuous(name="Consumption loss (%)", labels=scales::percent_format(), limits=c(maxwelf/100,0)) +
+  scale_y_continuous(name="Consumption loss (%)", labels=scales::percent_format(accuracy=0.01), limits=c(maxwelf/100,0)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
@@ -74,7 +74,7 @@ ggsave(paste0("welfare_q",country,".png"), width=plot_width, height=plot_height)
 ggplot(dat %>% filter(item=="Welfare", metric == "equal-p"),
        aes(x=rebate, y=value/100)) +
   geom_col(fill=onecol, alpha=0.5, colour="black") +
-  scale_y_continuous(name="Consumption loss (%)", labels=scales::percent_format(), limits=c(maxwelf/100,0)) +
+  scale_y_continuous(name="Consumption loss (%)", labels=scales::percent_format(accuracy = 0.01), limits=c(maxwelf/100,0)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
@@ -83,7 +83,7 @@ ggsave(paste0("welfare_p",country,".png"), width=plot_width, height=plot_height)
 ggplot(dat %>% filter(item == "Output", sector != "all", metric == "equal-p"),
        aes(x=rebate, y=value/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
-  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(), limits=c(maxoutput/100,minoutput/100)) +
+  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(accuracy=1), limits=c(maxoutput/100,minoutput/100)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL) +
@@ -93,7 +93,7 @@ ggsave(paste0("output_p",country,".png"), width=plot_width, height=plot_height)
 ggplot(dat %>% filter(item == "Output", sector != "all", metric == "equal-q"),
        aes(x=rebate, y=value/100, fill=sector)) +
   geom_col(alpha=0.5, colour="black", position="dodge") +
-  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(), limits=c(maxoutput/100,minoutput/100)) +
+  scale_y_continuous(name="Sector output (%)", labels=scales::percent_format(accuracy=1), limits=c(maxoutput/100,minoutput/100)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL) +
@@ -144,7 +144,7 @@ ggsave(paste0("pco2_p",country,".png"), width=plot_width, height=plot_height)
 ggplot(dat %>% filter(item == "Emissions", sector=="all", metric == "equal-p"),
        aes(x=rebate, y=value/100)) +
   geom_col(alpha=0.5, colour="black", position="dodge", fill=onecol) +
-  scale_y_continuous(name="Change in total emissions", labels=scales::percent_format(), limits=c(maxemitall/100,0)) +
+  scale_y_continuous(name="Change in total emissions", labels=scales::percent_format(accuracy=1), limits=c(maxemitall/100,0)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
@@ -153,7 +153,7 @@ ggsave(paste0("co2all_p",country,".png"), width=plot_width, height=plot_height)
 ggplot(dat %>% filter(item == "Emissions", sector=="all", metric == "equal-q"),
        aes(x=rebate, y=value/100)) +
   geom_col(alpha=0.5, colour="black", position="dodge", fill=onecol) +
-  scale_y_continuous(name="Change in total emissions", labels=scales::percent_format(), limits=c(maxemitall/100,0)) +
+  scale_y_continuous(name="Change in total emissions", labels=scales::percent_format(accuracy=1), limits=c(maxemitall/100,0)) +
   theme_bw() +
   geom_hline(yintercept = 0) +
   labs(x=NULL)
@@ -256,15 +256,15 @@ ggplot(dats %>% filter(item == "Welfare"), aes(x=target/100, y=value/100, colour
 ggsave(paste0("stringency_welfare",country,".png"), width=plot_width, height=plot_height)
 
 # Relative to LSR
-ggplot(inner_join(dats %>% filter(item == "Welfare", rebate != "LSR"),
-                  dats %>% filter(item == "Welfare", rebate == "LSR") %>% rename(LSR=value) %>% select(-rebate)
+ggplot(inner_join(dats %>% filter(item == "Welfare", rebate != "LS"),
+                  dats %>% filter(item == "Welfare", rebate == "LS") %>% rename(LSR=value) %>% select(-rebate)
                 ) %>%
-         mutate(relative_to_LSR = value / LSR - 1), aes(x=target/100, y=relative_to_LSR, colour = rebate)) +
+         mutate(relative_to_LSR = value / LSR ), aes(x=target/100, y=relative_to_LSR, colour = rebate)) +
   geom_line() +
   theme_bw() +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
-  scale_y_continuous(labels = scales::percent_format(), name="Consumption loss relative to LSR",limits = c(0,.47)) +
+  scale_y_continuous(labels = scales::percent_format(), name="Consumption loss relative to LSR") +
   scale_color_brewer(palette = "Set1") 
 ggsave(paste0("stringency_welfare_relative",country,".png"), width=plot_width, height=plot_height)
 
@@ -284,10 +284,10 @@ ggsave(paste0("stringency_output",country,".png"), width=plot_width, height=plot
 ggplot(inner_join(dats %>% filter(item == "Output", rebate != "LS"),
                   dats %>% filter(item == "Output", rebate == "LS") %>% rename(LSR=value) %>% select(-rebate)
 ) %>%
-  mutate(relative_to_LSR = value / LSR - 1), aes(x=target/100, y=relative_to_LSR, colour = rebate, linetype=sector)) +
+  mutate(relative_to_LSR = value / LSR ), aes(x=target/100, y=relative_to_LSR, colour = rebate, linetype=sector)) +
   geom_line() +
   theme_bw() +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Change in output relative to LSR") +
   scale_color_brewer(palette = "Set1")
@@ -308,11 +308,11 @@ ggsave(paste0("strongency_emissions",country,".png"), width=plot_width, height=p
 ggplot(inner_join(dats %>% filter(item == "Emissions", rebate != "LS"),
                   dats %>% filter(item == "Emissions", rebate == "LS") %>% rename(LSR=value) %>% select(-rebate)
 ) %>%
-  mutate(relative_to_LSR = value / LSR - 1) %>%
+  mutate(relative_to_LSR = value / LSR) %>%
   filter(sector != "all"), aes(x=target/100, y=relative_to_LSR, colour = rebate, linetype=sector)) +
   geom_line() +
   theme_bw() +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name="Change in emissions relative to LSR") +
   scale_color_brewer(palette = "Set1")
@@ -332,11 +332,11 @@ ggsave(paste0("stringency_price",country,".png"), width=plot_width, height=plot_
 ggplot(inner_join(dats %>% filter(item == "CO2 price($)", rebate != "LS"),
                   dats %>% filter(item == "CO2 price($)", rebate == "LS") %>% rename(LSR=value) %>% select(-rebate)
 ) %>%
-  mutate(relative_to_LSR = value / LSR - 1) %>%
+  mutate(relative_to_LSR = value / LSR ) %>%
   filter(sector != "all"), aes(x=target/100, y=relative_to_LSR, colour = rebate, linetype=sector)) +
   geom_line() +
   theme_bw() +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = c(0,1)) +
   scale_x_continuous(labels = scales::percent_format(), name="Economy-wide emission reduction") +
   scale_y_continuous(labels = scales::percent_format(), name=bquote("Opportunity cost of "~CO[2]~" relative to LSR")) +
   scale_color_brewer(palette = "Set1")
